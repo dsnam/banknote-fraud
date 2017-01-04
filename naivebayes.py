@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.stats import norm
 from sklearn.neighbors.kde import KernelDensity
 seed = 11
-#np.random.seed(seed)
+np.random.seed(seed)
 
 '''
 use training data to calc priors
@@ -25,19 +25,17 @@ calc posteriors with estimated dists
 def calc_posterior(sample,dist):
   prob = 1
   sample = sample.iloc[:-1]
-  #print sample.shape
   prob *= dist[0].score(sample.values.reshape(1,-1))
   prob *= dist[1]
   return prob
 
 df = pd.read_csv('banknote.csv')
+#randomized cross validation loop
 for j in xrange(10):
   mask = np.random.rand(len(df)) < .6
   df.reindex(np.random.permutation(df.index))
   train = df[mask]
   test = df[~mask]
-  #print test.iloc[list(np.where(test['class']==1)[0])].shape
-  #print test.iloc[list(np.where(test['class']==0)[0])].shape
   pos_prior = calc_prior(train,1)
   neg_prior = calc_prior(train,0)
 
